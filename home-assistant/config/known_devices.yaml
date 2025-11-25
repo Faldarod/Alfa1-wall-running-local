@@ -1,0 +1,51 @@
+# Mock devices for testing AlfaWall without real UniFi hardware
+# These device_trackers can be controlled via Home Assistant Developer Tools
+
+john_phone:
+  name: John's Phone
+  mac: 00:11:22:33:44:01
+  icon: mdi:cellphone
+  picture:
+  track: true
+
+john_laptop:
+  name: John's Laptop
+  mac: 00:11:22:33:44:02
+  icon: mdi:laptop
+  picture:
+  track: true
+
+jane_phone:
+  name: Jane's Phone
+  mac: 00:11:22:33:44:03
+  icon: mdi:cellphone
+  picture:
+  track: true
+
+alice_phone:
+  name: Alice's Phone
+  mac: 00:11:22:33:44:04
+  icon: mdi:cellphone
+  picture:
+  track: true
+
+alice_laptop:
+  name: Alice's Laptop
+  mac: 00:11:22:33:44:05
+  icon: mdi:laptop
+  picture:
+  track: true
+
+bob_phone:
+  name: Bob's Phone
+  mac: 00:11:22:33:44:06
+  icon: mdi:cellphone
+  picture:
+  track: true
+
+charlie_phone:
+  name: Charlie's Phone
+  mac: 00:11:22:33:44:07
+  icon: mdi:cellphone
+  picture:
+  track: true

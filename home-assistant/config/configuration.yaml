@@ -1,0 +1,74 @@
+# Home Assistant Configuration for AlfaWall Project
+# Fresh setup with HACS support
+
+# Loads default set of integrations
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+# Configuration files
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+# Input Booleans for simulating employee presence
+# Toggle these in the UI to simulate devices being present/away
+input_boolean:
+  john_phone_present:
+    name: "John's Phone Present"
+    icon: mdi:cellphone
+  john_laptop_present:
+    name: "John's Laptop Present"
+    icon: mdi:laptop
+  jane_phone_present:
+    name: "Jane's Phone Present"
+    icon: mdi:cellphone
+  sarah_phone_present:
+    name: "Sarah's Phone Present"
+    icon: mdi:cellphone
+  mike_laptop_present:
+    name: "Mike's Laptop Present"
+    icon: mdi:laptop
+  emma_phone_present:
+    name: "Emma's Phone Present"
+    icon: mdi:cellphone
+
+# Simulated device trackers using template platform
+# These mirror the input_boolean states as device_tracker entities
+# The AlfaWall application can read these as if they were real UniFi devices
+template:
+  - sensor:
+      - name: "John Phone Status"
+        unique_id: john_phone_device_tracker
+        state: >
+          {% if is_state('input_boolean.john_phone_present', 'on') %}
+            home
+          {% else %}
+            not_home
+          {% endif %}
+        attributes:
+          source_type: gps
+
+      - name: "John Laptop Status"
+        unique_id: john_laptop_device_tracker
+        state: >
+          {% if is_state('input_boolean.john_laptop_present', 'on') %}
+            home
+          {% else %}
+            not_home
+          {% endif %}
+        attributes:
+          source_type: gps
+
+      - name: "Jane Phone Status"
+        unique_id: jane_phone_device_tracker
+        state: >
+          {% if is_state('input_boolean.jane_phone_present', 'on') %}
+            home
+          {% else %}
+            not_home
+          {% endif %}
+        attributes:
+          source_type: gps

@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>WLED Simulator - [[${info.name}]]</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .device-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        .nav {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .nav a {
+            display: inline-block;
+            padding: 10px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .power-status {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .power-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .power-on {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .power-off {
+            background: linear-gradient(135deg, #636363 0%, #a2ab58 100%);
+        }
+
+        .segment-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .segment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .segment-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .segment-info {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .segment-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .status-on {
+            background: rgba(56, 239, 125, 0.3);
+            border: 1px solid #38ef7d;
+        }
+
+        .status-off {
+            background: rgba(100, 100, 100, 0.3);
+            border: 1px solid #888;
+        }
+
+        .led-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .led {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .led:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .led::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            opacity: 0.5;
+            filter: blur(8px);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .last-update {
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+
+        .control-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-section {
+            margin-bottom: 20px;
+        }
+
+        .control-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .control-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .control-input {
+            padding: 10px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .control-input:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .control-input:focus {
+            outline: none;
+            border-color: #38ef7d;
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 10px rgba(56, 239, 125, 0.3);
+        }
+
+        .control-input[type="range"] {
+            cursor: pointer;
+        }
+
+        .control-input[type="color"] {
+            padding: 6px;
+            height: 45px;
+            cursor: pointer;
+        }
+
+        .control-button {
+            padding: 10px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(56, 239, 125, 0.2);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .control-button:hover {
+            background: rgba(56, 239, 125, 0.3);
+            border-color: #38ef7d;
+            box-shadow: 0 0 10px rgba(56, 239, 125, 0.2);
+        }
+
+        .control-button:active {
+            transform: scale(0.98);
+        }
+
+        .control-button.danger {
+            background: rgba(255, 68, 68, 0.2);
+            border-color: rgba(255, 68, 68, 0.5);
+        }
+
+        .control-button.danger:hover {
+            background: rgba(255, 68, 68, 0.3);
+            border-color: #ff4444;
+            box-shadow: 0 0 10px rgba(255, 68, 68, 0.2);
+        }
+
+        .value-display {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .segment-controls {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .segment-control-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .segment-control-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .segment-toggle-btn {
+            padding: 6px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            background: rgba(56, 239, 125, 0.2);
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .segment-toggle-btn.off {
+            background: rgba(255, 68, 68, 0.2);
+            border-color: rgba(255, 68, 68, 0.5);
+        }
+
+        .segment-toggle-btn.off:hover {
+            background: rgba(255, 68, 68, 0.3);
+        }
+
+        .segment-toggle-btn:hover {
+            background: rgba(56, 239, 125, 0.3);
+        }
+
+        .control-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 th:text="${info.name}">WLED Simulator</h1>
+            <div class="device-info">
+                <div class="info-item">
+                    <span class="info-label">Version:</span>
+                    <span th:text="${info.version}">0.14.1</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Total LEDs:</span>
+                    <span th:text="${info.leds.count}">30</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Segments:</span>
+                    <span th:text="${state.segments.size()}">1</span>
+                </div>
+            </div>
+        </header>
+
+        <nav class="nav">
+            <a href="/config">⚙️ Configuration</a>
+        </nav>
+
+        <!-- Master Controls -->
+        <div class="control-panel">
+            <div class="control-section">
+                <div class="control-title">🎛️ Master Controls</div>
+                <div class="control-group">
+                    <div class="control-item">
+                        <label class="control-label">Master Power</label>
+                        <button id="masterPowerBtn" class="control-button">
+                            <span id="masterPowerText">Turn OFF</span>
+                        </button>
+                    </div>
+                    <div class="control-item">
+                        <label class="control-label">Master Brightness</label>
+                        <input type="range" id="masterBrightness" class="control-input"
+                               min="0" max="255" value="128">
+                        <div class="value-display"><span id="masterBrightnessValue">128</span>/255</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="power-status">
+            <span class="power-badge" th:classappend="${state.on ? 'power-on' : 'power-off'}"
+                  th:text="${state.on ? '● ON' : '○ OFF'}">
+                ● ON
+            </span>
+            <span style="margin-left: 15px; opacity: 0.8;">
+                Brightness: <span th:text="${state.brightness}">128</span>/255
+            </span>
+        </div>
+
+        <div th:each="segment : ${state.segments}" class="segment-container">
+            <div class="segment-header">
+                <div>
+                    <span class="segment-title">
+                        Segment <span th:text="${segment.id}">0</span>
+                    </span>
+                    <span class="segment-status" th:classappend="${segment.on ? 'status-on' : 'status-off'}">
+                        <span th:text="${segment.on ? 'ON' : 'OFF'}">ON</span>
+                    </span>
+                </div>
+                <div class="segment-info">
+                    LEDs <span th:text="${segment.start}">0</span>-<span th:text="${segment.stop - 1}">29</span>
+                    (<span th:text="${segment.length}">30</span> LEDs)
+                    | Brightness: <span th:text="${segment.brightness}">128</span>
+                    | Effect: <span class="effect-name" th:text="${segment.effect}">0</span>
+                    | Speed: <span th:text="${segment.speed}">128</span>
+                    | Intensity: <span th:text="${segment.intensity}">128</span>
+                </div>
+            </div>
+
+            <!-- LED Strip Display -->
+            <div class="led-strip">
+                <!-- Generate LEDs for this segment -->
+                <div class="led" th:each="i : ${#numbers.sequence(segment.start, segment.stop - 1)}"
+                     th:with="color=${segment.colors[0]}"
+                     th:style="'background-color: rgb(' + ${color[0]} + ',' + ${color[1]} + ',' + ${color[2]} + '); box-shadow: 0 0 15px rgba(' + ${color[0]} + ',' + ${color[1]} + ',' + ${color[2]} + ', 0.8);'"
+                     th:title="'LED ' + ${i}">
+                </div>
+            </div>
+
+            <!-- Segment Controls -->
+            <div class="segment-controls">
+                <div class="segment-control-header">
+                    <span class="segment-control-title">Segment <span th:text="${segment.id}">0</span> Settings</span>
+                    <button class="segment-toggle-btn" th:classappend="${!segment.on ? 'off' : ''}"
+                            th:attr="data-segment=${segment.id}" onclick="toggleSegmentPower(event)">
+                        <span th:text="${segment.on ? '✓ ON' : '✗ OFF'}">✓ ON</span>
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <!-- Brightness Control -->
+                    <div class="control-item">
+                        <label class="control-label">Brightness</label>
+                        <input type="range" class="segment-brightness control-input"
+                               th:attr="data-segment=${segment.id},data-initial=${segment.brightness}"
+                               min="0" max="255" th:value="${segment.brightness}">
+                        <div class="value-display"><span class="brightness-value" th:text="${segment.brightness}">128</span>/255</div>
+                    </div>
+
+                    <!-- Primary Color -->
+                    <div class="control-item">
+                        <label class="control-label">Primary Color</label>
+                        <input type="color" class="segment-color control-input"
+                               th:attr="data-segment=${segment.id},data-color-index=0"
+                               value="#FF0000">
+                    </div>
+
+                    <!-- Effect Selection -->
+                    <div class="control-item">
+                        <label class="control-label">Effect</label>
+                        <select class="segment-effect control-input"
+                                th:attr="data-segment=${segment.id}">
+                            <option th:each="effect, iter : ${effects.entrySet()}"
+                                    th:value="${effect.key}"
+                                    th:selected="${segment.effect == effect.key}"
+                                    th:text="${effect.key} + ': ' + ${effect.value}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <!-- Speed Control -->
+                    <div class="control-item">
+                        <label class="control-label">Speed</label>
+                        <input type="range" class="segment-speed control-input"
+                               th:attr="data-segment=${segment.id}"
+                               min="0" max="255" th:value="${segment.speed}">
+                        <div class="value-display"><span class="speed-value" th:text="${segment.speed}">128</span>/255</div>
+                    </div>
+
+                    <!-- Intensity Control -->
+                    <div class="control-item">
+                        <label class="control-label">Intensity</label>
+                        <input type="range" class="segment-intensity control-input"
+                               th:attr="data-segment=${segment.id}"
+                               min="0" max="255" th:value="${segment.intensity}">
+                        <div class="value-display"><span class="intensity-value" th:text="${segment.intensity}">128</span>/255</div>
+                    </div>
+
+                    <!-- Palette Selection -->
+                    <div class="control-item">
+                        <label class="control-label">Palette</label>
+                        <select class="segment-palette control-input"
+                                th:attr="data-segment=${segment.id}">
+                            <option th:each="palette, iter : ${palettes.entrySet()}"
+                                    th:value="${palette.key}"
+                                    th:selected="${segment.palette == palette.key}"
+                                    th:text="${palette.key} + ': ' + ${palette.value}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div>WLED Simulator for Home Assistant Testing</div>
+            <div class="last-update">
+                <span id="wsStatus" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: red; margin-right: 5px;"></span>
+                <span id="wsStatusText">Connecting...</span> |
+                Last Updated: <span id="lastUpdate">--</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        let ws = null;
+        let reconnectAttempts = 0;
+        const maxReconnectDelay = 30000; // 30 seconds max
+        let animationFrameId = null;
+        let effectNames = [];
+        let currentSegmentStates = [];
+
+        // Load effect and palette names on startup
+        async function loadEffectNames() {
+            try {
+                const response = await fetch('/api/effects');
+                const data = await response.json();
+                effectNames = data.effects;
+
+                // Populate effect select dropdowns
+                document.querySelectorAll('.segment-effect').forEach(select => {
+                    const segmentId = select.getAttribute('data-segment');
+                    const currentValue = select.value;
+                    select.innerHTML = '';
+
+                    // effectNames is now a Map (object with numeric keys)
+                    Object.entries(effectNames).forEach(([index, name]) => {
+                        const option = document.createElement('option');
+                        option.value = index;
+                        option.textContent = `${index}: ${name}`;
+                        if (index == currentValue) option.selected = true;
+                        select.appendChild(option);
+                    });
+                });
+            } catch (error) {
+                console.error('Failed to load effect names:', error);
+            }
+        }
+
+        function updateTimestamp() {
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+        }
+
+        function updateConnectionStatus(connected, text) {
+            const statusDot = document.getElementById('wsStatus');
+            const statusText = document.getElementById('wsStatusText');
+            statusDot.style.background = connected ? '#38ef7d' : '#ff4444';
+            statusText.textContent = text;
+        }
+
+        // Effect animation loop
+        function animateEffects() {
+            const time = Date.now();
+
+            // Fetch simulated effect data
+            fetch(`/api/effects/simulate-all?time=${time}`)
+                .then(response => response.json())
+                .then(data => {
+                    renderEffectFrame(data);
+                })
+                .catch(error => {
+                    console.error('Effect simulation error:', error);
+                });
+
+            // Continue animation loop
+            animationFrameId = setTimeout(animateEffects, 50); // 20 FPS
+        }
+
+        function renderEffectFrame(data) {
+            if (!data || !data.segments) return;
+
+            data.segments.forEach(segmentData => {
+                const segmentId = segmentData.segmentId;
+                const segmentContainer = document.querySelectorAll('.segment-container')[segmentId];
+                if (!segmentContainer) return;
+
+                const leds = segmentContainer.querySelectorAll('.led');
+                const colors = segmentData.colors;
+
+                // Update each LED with simulated effect color
+                leds.forEach((led, index) => {
+                    if (index < colors.length) {
+                        const color = colors[index];
+                        if (segmentData.on && data.masterOn) {
+                            const rgbColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+                            led.style.backgroundColor = rgbColor;
+                            led.style.boxShadow = `0 0 15px rgba(${color[0]}, ${color[1]}, ${color[2]}, 0.8)`;
+                        } else {
+                            led.style.backgroundColor = 'rgb(20, 20, 20)';
+                            led.style.boxShadow = '0 0 5px rgba(0, 0, 0, 0.5)';
+                        }
+                    }
+                });
+
+                // Update effect name in segment info
+                const effectNameSpan = segmentContainer.querySelector('.effect-name');
+                if (effectNameSpan && effectNames[segmentData.effect]) {
+                    effectNameSpan.textContent = `${segmentData.effect} (${effectNames[segmentData.effect]})`;
+                }
+            });
+
+            updateTimestamp();
+        }
+
+        function updateLEDColors(state) {
+            if (!state || !state.seg) return;
+
+            // Store current segment states for effect animation
+            currentSegmentStates = state.seg;
+
+            state.seg.forEach(segment => {
+                const segmentId = segment.id;
+                const isOn = segment.on;
+
+                // Find all LED elements for this segment
+                const segmentContainer = document.querySelectorAll('.segment-container')[segmentId];
+                if (!segmentContainer) return;
+
+                // Update segment header info
+                const segmentHeader = segmentContainer.querySelector('.segment-info');
+                if (segmentHeader) {
+                    const spans = segmentHeader.querySelectorAll('span');
+                    if (spans.length >= 6) {
+                        spans[3].textContent = segment.bri; // Brightness
+                        // Effect name updated by animation loop
+                        if (spans.length >= 8) {
+                            spans[5].textContent = segment.sx || 128; // Speed
+                            spans[7].textContent = segment.ix || 128; // Intensity
+                        }
+                    }
+                }
+
+                // Update segment status badge
+                const statusBadge = segmentContainer.querySelector('.segment-status');
+                if (statusBadge) {
+                    statusBadge.textContent = isOn ? 'ON' : 'OFF';
+                    statusBadge.className = isOn ? 'segment-status status-on' : 'segment-status status-off';
+                }
+
+                // SYNC SEGMENT FORM CONTROLS WITH BACKEND STATE
+                // Update segment brightness slider
+                const brightnessInput = document.querySelector(`.segment-brightness[data-segment="${segmentId}"]`);
+                if (brightnessInput && segment.bri !== undefined) {
+                    brightnessInput.value = segment.bri;
+                    const brightnessPrev = brightnessInput.parentElement.querySelector('.brightness-value');
+                    if (brightnessPrev) brightnessPrev.textContent = segment.bri;
+                }
+
+                // Update segment power toggle button
+                const toggleBtn = document.querySelector(`.segment-toggle-btn[data-segment="${segmentId}"]`);
+                if (toggleBtn) {
+                    if (isOn) {
+                        toggleBtn.textContent = '✓ ON';
+                        toggleBtn.classList.remove('off');
+                    } else {
+                        toggleBtn.textContent = '✗ OFF';
+                        toggleBtn.classList.add('off');
+                    }
+                }
+
+                // Update segment speed slider
+                const speedInput = document.querySelector(`.segment-speed[data-segment="${segmentId}"]`);
+                if (speedInput && segment.sx !== undefined) {
+                    speedInput.value = segment.sx;
+                    const speedValue = speedInput.parentElement.querySelector('.speed-value');
+                    if (speedValue) speedValue.textContent = segment.sx;
+                }
+
+                // Update segment intensity slider
+                const intensityInput = document.querySelector(`.segment-intensity[data-segment="${segmentId}"]`);
+                if (intensityInput && segment.ix !== undefined) {
+                    intensityInput.value = segment.ix;
+                    const intensityValue = intensityInput.parentElement.querySelector('.intensity-value');
+                    if (intensityValue) intensityValue.textContent = segment.ix;
+                }
+
+                // Update segment effect select
+                const effectSelect = document.querySelector(`.segment-effect[data-segment="${segmentId}"]`);
+                if (effectSelect && segment.fx !== undefined) {
+                    effectSelect.value = segment.fx;
+                }
+
+                // Update segment palette select
+                const paletteSelect = document.querySelector(`.segment-palette[data-segment="${segmentId}"]`);
+                if (paletteSelect && segment.pal !== undefined) {
+                    paletteSelect.value = segment.pal;
+                }
+            });
+
+            // Update global power status
+            if (state.on !== undefined) {
+                const powerBadge = document.querySelector('.power-badge');
+                if (powerBadge) {
+                    powerBadge.textContent = state.on ? '● ON' : '○ OFF';
+                    powerBadge.className = state.on ? 'power-badge power-on' : 'power-badge power-off';
+                }
+
+                // SYNC MASTER POWER BUTTON
+                const masterPowerBtn = document.getElementById('masterPowerBtn');
+                const masterPowerText = document.getElementById('masterPowerText');
+                if (masterPowerBtn && masterPowerText) {
+                    if (state.on) {
+                        masterPowerBtn.style.background = 'rgba(56, 239, 125, 0.2)';
+                        masterPowerBtn.style.borderColor = 'rgba(56, 239, 125, 0.5)';
+                        masterPowerText.textContent = 'Turn OFF';
+                    } else {
+                        masterPowerBtn.style.background = 'rgba(255, 68, 68, 0.2)';
+                        masterPowerBtn.style.borderColor = 'rgba(255, 68, 68, 0.5)';
+                        masterPowerText.textContent = 'Turn ON';
+                    }
+                }
+            }
+
+            // Update global brightness
+            if (state.bri !== undefined) {
+                const brightnessDisplay = document.querySelector('.power-status span:nth-of-type(2) span');
+                if (brightnessDisplay) {
+                    brightnessDisplay.textContent = state.bri;
+                }
+
+                // SYNC MASTER BRIGHTNESS SLIDER
+                const masterBrightnessInput = document.getElementById('masterBrightness');
+                const masterBrightnessValue = document.getElementById('masterBrightnessValue');
+                if (masterBrightnessInput) {
+                    masterBrightnessInput.value = state.bri;
+                }
+                if (masterBrightnessValue) {
+                    masterBrightnessValue.textContent = state.bri;
+                }
+            }
+
+            updateTimestamp();
+        }
+
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws`;
+
+            console.log('Connecting to WebSocket:', wsUrl);
+            updateConnectionStatus(false, 'Connecting...');
+
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = function() {
+                console.log('WebSocket connected');
+                updateConnectionStatus(true, 'Live Updates Active');
+                reconnectAttempts = 0;
+            };
+
+            ws.onmessage = function(event) {
+                try {
+                    const data = JSON.parse(event.data);
+                    console.log('Received WebSocket update:', data);
+                    if (data.state) {
+                        updateLEDColors(data.state);
+                    }
+                } catch (error) {
+                    console.error('Error parsing WebSocket message:', error);
+                }
+            };
+
+            ws.onerror = function(error) {
+                console.error('WebSocket error:', error);
+                updateConnectionStatus(false, 'Connection Error');
+            };
+
+            ws.onclose = function(event) {
+                console.log('WebSocket closed:', event.code, event.reason);
+                updateConnectionStatus(false, 'Disconnected');
+
+                // Exponential backoff reconnection
+                const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), maxReconnectDelay);
+                reconnectAttempts++;
+
+                console.log(`Reconnecting in ${delay}ms (attempt ${reconnectAttempts})...`);
+                updateConnectionStatus(false, `Reconnecting... (${reconnectAttempts})`);
+
+                setTimeout(connectWebSocket, delay);
+            };
+        }
+
+        // ============================================================================
+        // CONTROL FUNCTIONS
+        // ============================================================================
+
+        // Master power toggle
+        async function toggleMasterPower() {
+            const btn = document.getElementById('masterPowerBtn');
+            const newState = !currentSegmentStates.some(s => s.on); // Toggle based on current state
+
+            const payload = { on: newState };
+
+            try {
+                const response = await fetch('/json/state', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    updateMasterControlDisplay(data);
+                }
+            } catch (error) {
+                console.error('Failed to toggle master power:', error);
+            }
+        }
+
+        // Update master brightness
+        async function setMasterBrightness(value) {
+            const payload = { bri: parseInt(value) };
+
+            try {
+                const response = await fetch('/json/state', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('masterBrightnessValue').textContent = data.bri;
+                }
+            } catch (error) {
+                console.error('Failed to set brightness:', error);
+            }
+        }
+
+        // Toggle segment power
+        async function toggleSegmentPower(event) {
+            const btn = event.target.closest('.segment-toggle-btn');
+            const segmentId = parseInt(btn.getAttribute('data-segment'));
+            const segment = currentSegmentStates.find(s => s.id === segmentId);
+            const newState = !segment.on;
+
+            const payload = {
+                seg: [{
+                    id: segmentId,
+                    on: newState
+                }]
+            };
+
+            try {
+                const response = await fetch('/json/state', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    updateSegmentControlDisplay(segmentId, data);
+                }
+            } catch (error) {
+                console.error('Failed to toggle segment power:', error);
+            }
+        }
+
+        // Update segment brightness
+        async function setSegmentBrightness(event) {
+            const input = event.target;
+            const segmentId = parseInt(input.getAttribute('data-segment'));
+            const value = parseInt(input.value);
+
+            // Update display immediately for better UX
+            input.parentElement.querySelector('.brightness-value').textContent = value;
+
+            const payload = {
+                seg: [{
+                    id: segmentId,
+                    bri: value
+                }]
+            };
+
+            try {
+                await fetch('/json/state', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (error) {
+                console.error('Failed to set segment brightness:', error);
+            }
+        }
+
+        // Update segment color
+        async function setSegmentColor(event) {
+            const input = event.target;
+            const segmentId = parseInt(input.getAttribute('data-segment'));
+            const colorIndex = parseInt(input.getAttribute('data-color-index'));
+            const hexColor = input.value;
+
+            // Convert hex to RGB
+            const r = parseInt(hexColor.substr(1, 2), 16);
+            const g = parseInt(hexColor.substr(3, 2), 16);
+            const b = parseInt(hexColor.substr(5, 2), 16);
+
+            const payload = {
+                seg: [{
+                    id: segmentId,
+                    col: [
+                        [r, g, b],
+                        [0, 0, 0],
+                        [0, 0, 0]
+                    ]
+                }]
+            };
+
+            try {
+                await fetch('/json/state', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (error) {
+                console.error('Failed to set segment color:', error);
+            }
+        }
+
+        // Update segment effect
+        async function setSegmentEffect(event) {
+            const select = event.target;
+            const segmentId = parseInt(select.getAttribute('data-segment'));
+            const effectId = parseInt(select.value);
+
+            const payload = {
+                seg: [{
+                    id: segmentId,
+                    fx: effectId
+                }]
+            };
+
+            try {
+                await fetch('/json/state', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (error) {
+                console.error('Failed to set segment effect:', error);
+            }
+        }
+
+        // Update segment speed
+        async function setSegmentSpeed(event) {
+            const input = event.target;
+            const segmentId = parseInt(input.getAttribute('data-segment'));
+            const value = parseInt(input.value);
+
+            // Update display immediately
+            input.parentElement.querySelector('.speed-value').textContent = value;
+
+            const payload = {
+                seg: [{
+                    id: segmentId,
+                    sx: value
+                }]
+            };
+
+            try {
+                await fetch('/json/state', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (error) {
+                console.error('Failed to set segment speed:', error);
+            }
+        }
+
+        // Update segment intensity
+        async function setSegmentIntensity(event) {
+            const input = event.target;
+            const segmentId = parseInt(input.getAttribute('data-segment'));
+            const value = parseInt(input.value);
+
+            // Update display immediately
+            input.parentElement.querySelector('.intensity-value').textContent = value;
+
+            const payload = {
+                seg: [{
+                    id: segmentId,
+                    ix: value
+                }]
+            };
+
+            try {
+                await fetch('/json/state', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (error) {
+                console.error('Failed to set segment intensity:', error);
+            }
+        }
+
+        // Update segment palette
+        async function setSegmentPalette(event) {
+            const select = event.target;
+            const segmentId = parseInt(select.getAttribute('data-segment'));
+            const paletteId = parseInt(select.value);
+
+            const payload = {
+                seg: [{
+                    id: segmentId,
+                    pal: paletteId
+                }]
+            };
+
+            try {
+                await fetch('/json/state', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (error) {
+                console.error('Failed to set segment palette:', error);
+            }
+        }
+
+        // Update master control display based on state
+        function updateMasterControlDisplay(state) {
+            const masterPowerBtn = document.getElementById('masterPowerBtn');
+            const masterPowerText = document.getElementById('masterPowerText');
+            const powerBadge = document.querySelector('.power-badge');
+
+            if (state.on) {
+                masterPowerBtn.style.background = 'rgba(56, 239, 125, 0.2)';
+                masterPowerBtn.style.borderColor = 'rgba(56, 239, 125, 0.5)';
+                masterPowerText.textContent = 'Turn OFF';
+                if (powerBadge) {
+                    powerBadge.textContent = '● ON';
+                    powerBadge.className = 'power-badge power-on';
+                }
+            } else {
+                masterPowerBtn.style.background = 'rgba(255, 68, 68, 0.2)';
+                masterPowerBtn.style.borderColor = 'rgba(255, 68, 68, 0.5)';
+                masterPowerText.textContent = 'Turn ON';
+                if (powerBadge) {
+                    powerBadge.textContent = '○ OFF';
+                    powerBadge.className = 'power-badge power-off';
+                }
+            }
+        }
+
+        // Update segment control display based on state
+        function updateSegmentControlDisplay(segmentId, state) {
+            const segment = state.seg ? state.seg.find(s => s.id === segmentId) : null;
+            if (!segment) return;
+
+            const btn = document.querySelector(`.segment-toggle-btn[data-segment="${segmentId}"]`);
+            if (btn) {
+                if (segment.on) {
+                    btn.textContent = '✓ ON';
+                    btn.classList.remove('off');
+                } else {
+                    btn.textContent = '✗ OFF';
+                    btn.classList.add('off');
+                }
+            }
+        }
+
+        // Initialize control event listeners
+        function initializeControls() {
+            // Master controls
+            document.getElementById('masterPowerBtn').addEventListener('click', toggleMasterPower);
+            document.getElementById('masterBrightness').addEventListener('input', (e) => setMasterBrightness(e.target.value));
+
+            // Segment controls
+            document.querySelectorAll('.segment-brightness').forEach(input => {
+                input.addEventListener('input', setSegmentBrightness);
+            });
+
+            document.querySelectorAll('.segment-color').forEach(input => {
+                input.addEventListener('change', setSegmentColor);
+            });
+
+            document.querySelectorAll('.segment-effect').forEach(select => {
+                select.addEventListener('change', setSegmentEffect);
+            });
+
+            document.querySelectorAll('.segment-speed').forEach(input => {
+                input.addEventListener('input', setSegmentSpeed);
+            });
+
+            document.querySelectorAll('.segment-intensity').forEach(input => {
+                input.addEventListener('input', setSegmentIntensity);
+            });
+
+            document.querySelectorAll('.segment-palette').forEach(select => {
+                select.addEventListener('change', setSegmentPalette);
+            });
+        }
+
+        // Initialize
+        async function init() {
+            await loadEffectNames();
+            initializeControls();
+            updateTimestamp();
+            connectWebSocket();
+
+            // Start effect animation loop
+            animateEffects();
+        }
+
+        // Start initialization
+        init();
+
+        // Fallback: Update timestamp every 2 seconds
+        setInterval(updateTimestamp, 2000);
+    </script>
+</body>
+</html>

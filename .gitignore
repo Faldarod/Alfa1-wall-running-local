@@ -1,0 +1,51 @@
+# Runtime data - Home Assistant
+home-assistant/config/.storage/
+home-assistant/config/.cloud/
+home-assistant/config/home-assistant_v2.db*
+home-assistant/config/home-assistant.log*
+home-assistant/config/.HA_VERSION
+home-assistant/config/.ha_run.lock
+home-assistant/config/deps/
+home-assistant/config/__pycache__/
+home-assistant/config/tts/
+
+# UniFi data (optional component)
+unifi/unifi-data/*
+!unifi/unifi-data/.gitkeep
+unifi/unifi-db-data/*
+!unifi/unifi-db-data/.gitkeep
+
+# WLED Simulator build artifacts
+wled-simulator/target/
+wled-simulator/.mvn/
+wled-simulator/mvnw
+wled-simulator/mvnw.cmd
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Node modules (if any testing scripts use npm)
+node_modules/
+package-lock.json
+
+# Environment variables (sensitive)
+.env
+
+# Docker
+.docker/
+
+# Logs
+*.log
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
