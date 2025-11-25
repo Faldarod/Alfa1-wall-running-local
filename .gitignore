@@ -1,13 +1,6 @@
 # Runtime data - Home Assistant
-home-assistant/config/.storage/
-home-assistant/config/.cloud/
-home-assistant/config/home-assistant_v2.db*
-home-assistant/config/home-assistant.log*
-home-assistant/config/.HA_VERSION
-home-assistant/config/.ha_run.lock
-home-assistant/config/deps/
-home-assistant/config/__pycache__/
-home-assistant/config/tts/
+# Ignore all files in home-assistant folder
+home-assistant/config/*
 
 # UniFi data (optional component)
 unifi/unifi-data/*
