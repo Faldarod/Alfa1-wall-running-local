@@ -1,0 +1,102 @@
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <mat-icon>layers</mat-icon>
+      <span class="segment-title">Segment {{ segment.id }}</span>
+      <span class="segment-range">({{ segment.start }}-{{ segment.stop }})</span>
+    </mat-panel-title>
+    <mat-panel-description>
+      <mat-slide-toggle
+        [checked]="segment.on"
+        (change)="toggleSegmentPower()"
+        (click)="$event.stopPropagation()">
+      </mat-slide-toggle>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+
+  <div class="segment-controls">
+    <!-- Brightness -->
+    <div class="control-row">
+      <label>Brightness: {{ segment.bri }}</label>
+      <mat-slider
+        min="0"
+        max="255"
+        step="1"
+        discrete
+        [disabled]="!segment.on">
+        <input matSliderThumb [value]="segment.bri" (valueChange)="onBrightnessChange($event)">
+      </mat-slider>
+    </div>
+
+    <!-- Effect -->
+    <div class="control-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Effect</mat-label>
+        <mat-select
+          [value]="segment.fx"
+          (selectionChange)="onEffectChange($event.value)"
+          [disabled]="!segment.on">
+          <mat-option *ngFor="let effect of effectEntries" [value]="effect.id">
+            {{ effect.id }}: {{ effect.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Speed -->
+    <div class="control-row">
+      <label>Speed: {{ segment.sx }}</label>
+      <mat-slider
+        min="0"
+        max="255"
+        step="1"
+        discrete
+        [disabled]="!segment.on">
+        <input matSliderThumb [value]="segment.sx" (valueChange)="onSpeedChange($event)">
+      </mat-slider>
+    </div>
+
+    <!-- Intensity -->
+    <div class="control-row">
+      <label>Intensity: {{ segment.ix }}</label>
+      <mat-slider
+        min="0"
+        max="255"
+        step="1"
+        discrete
+        [disabled]="!segment.on">
+        <input matSliderThumb [value]="segment.ix" (valueChange)="onIntensityChange($event)">
+      </mat-slider>
+    </div>
+
+    <!-- Palette -->
+    <div class="control-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Palette</mat-label>
+        <mat-select
+          [value]="segment.pal"
+          (selectionChange)="onPaletteChange($event.value)"
+          [disabled]="!segment.on">
+          <mat-option *ngFor="let palette of paletteEntries" [value]="palette.id">
+            {{ palette.id }}: {{ palette.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Colors -->
+    <div class="control-row colors-section">
+      <label>Colors:</label>
+      <div class="color-pickers">
+        <div class="color-picker" *ngFor="let color of segment.col; let i = index">
+          <label>Color {{ i + 1 }}</label>
+          <input
+            type="color"
+            [value]="rgbToHex(color)"
+            (change)="onColorChange(i, $any($event.target).value)"
+            [disabled]="!segment.on">
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-expansion-panel>

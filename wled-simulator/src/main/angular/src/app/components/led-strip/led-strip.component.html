@@ -1,0 +1,12 @@
+<div class="led-strip-container">
+  <div class="led-grid">
+    <div class="led-row" *ngFor="let row of getRows()">
+      <div
+        class="led"
+        *ngFor="let led of row"
+        [style.background-color]="led.color"
+        [title]="'LED ' + led.index">
+      </div>
+    </div>
+  </div>
+</div>

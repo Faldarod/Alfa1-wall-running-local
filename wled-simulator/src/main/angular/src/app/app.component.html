@@ -1,0 +1,45 @@
+<div class="app-container">
+  <!-- Device Header -->
+  <app-device-header
+    *ngIf="deviceInfo$ | async as deviceInfo"
+    [deviceInfo]="deviceInfo">
+  </app-device-header>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Master Controls -->
+    <app-master-controls
+      *ngIf="deviceState$ | async as deviceState"
+      [state]="deviceState">
+    </app-master-controls>
+
+    <!-- LED Strip Visualization -->
+    <app-led-strip
+      *ngIf="deviceInfo$ | async as deviceInfo"
+      [totalLeds]="deviceInfo.leds.count">
+    </app-led-strip>
+
+    <!-- Segments -->
+    <div class="segments-container">
+      <h2 class="segments-title">Segments</h2>
+      <ng-container *ngIf="deviceState$ | async as deviceState">
+        <ng-container *ngIf="effects$ | async as effects">
+          <ng-container *ngIf="palettes$ | async as palettes">
+            <app-segment-card
+              *ngFor="let segment of deviceState.seg"
+              [segment]="segment"
+              [effects]="effects"
+              [palettes]="palettes">
+            </app-segment-card>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Connection Status Footer -->
+  <app-connection-status
+    *ngIf="connectionStatus$ | async as connectionStatus"
+    [status]="connectionStatus">
+  </app-connection-status>
+</div>

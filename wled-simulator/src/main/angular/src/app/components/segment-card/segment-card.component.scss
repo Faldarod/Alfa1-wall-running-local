@@ -1,0 +1,74 @@
+mat-expansion-panel {
+  margin-bottom: 16px;
+}
+
+mat-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .segment-title {
+    font-weight: 500;
+  }
+
+  .segment-range {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 0.875rem;
+  }
+}
+
+.segment-controls {
+  padding: 16px;
+}
+
+.control-row {
+  margin-bottom: 24px;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  mat-slider {
+    width: 100%;
+  }
+
+  &.colors-section {
+    .color-pickers {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .color-picker {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      label {
+        font-size: 0.75rem;
+        margin-bottom: 4px;
+      }
+
+      input[type="color"] {
+        width: 60px;
+        height: 40px;
+        border: 1px solid rgba(0, 0, 0, 0.23);
+        border-radius: 4px;
+        cursor: pointer;
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
+
+.full-width {
+  width: 100%;
+}

@@ -1,0 +1,46 @@
+mat-card {
+  margin-bottom: 24px;
+}
+
+mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.25rem;
+}
+
+mat-card-content {
+  padding: 16px;
+}
+
+.control-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .control-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    min-width: 150px;
+
+    mat-icon {
+      color: rgba(0, 0, 0, 0.54);
+    }
+  }
+
+  mat-slide-toggle {
+    flex-shrink: 0;
+  }
+
+  .brightness-slider {
+    flex: 1;
+  }
+}

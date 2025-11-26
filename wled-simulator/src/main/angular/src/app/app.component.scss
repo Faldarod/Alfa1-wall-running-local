@@ -1,0 +1,37 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #fafafa;
+}
+
+.main-content {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+  padding-bottom: 80px; // Space for fixed footer
+}
+
+.segments-container {
+  margin-top: 32px;
+}
+
+.segments-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 16px;
+    padding-bottom: 80px;
+  }
+
+  .segments-title {
+    font-size: 1.25rem;
+  }
+}

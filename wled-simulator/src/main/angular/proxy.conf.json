@@ -1,0 +1,18 @@
+{
+  "/json/*": {
+    "target": "http://localhost:8081",
+    "secure": false,
+    "logLevel": "debug"
+  },
+  "/api/*": {
+    "target": "http://localhost:8081",
+    "secure": false,
+    "logLevel": "debug"
+  },
+  "/ws": {
+    "target": "ws://localhost:8081",
+    "secure": false,
+    "ws": true,
+    "logLevel": "debug"
+  }
+}

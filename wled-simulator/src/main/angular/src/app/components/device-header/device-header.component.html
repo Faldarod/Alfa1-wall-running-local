@@ -1,0 +1,15 @@
+<mat-toolbar color="primary">
+  <mat-icon class="toolbar-icon">lightbulb</mat-icon>
+  <span class="device-name">{{ deviceInfo.name }}</span>
+  <span class="spacer"></span>
+  <div class="device-details">
+    <span class="detail-item">
+      <mat-icon>info</mat-icon>
+      v{{ deviceInfo.version }}
+    </span>
+    <span class="detail-item">
+      <mat-icon>grid_on</mat-icon>
+      {{ deviceInfo.leds.count }} LEDs
+    </span>
+  </div>
+</mat-toolbar>

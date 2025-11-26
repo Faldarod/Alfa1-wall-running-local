@@ -1,0 +1,32 @@
+.led-strip-container {
+  padding: 16px;
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.led-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+.led-row {
+  display: flex;
+  gap: 4px;
+}
+
+.led {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid #333;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.05s ease;
+
+  &:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+  }
+}
