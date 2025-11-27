@@ -8,11 +8,15 @@ import { WebsocketService } from './websocket.service';
   providedIn: 'root'
 })
 export class StateService {
+  // Track last update ID to prevent duplicate processing
+  private lastUpdateId = 0;
+
   // State subjects
   private deviceStateSubject = new BehaviorSubject<WledState>({
     on: false,
     bri: 128,
-    seg: []
+    seg: [],
+    v: 0
   });
   public deviceState$: Observable<WledState> = this.deviceStateSubject.asObservable();
 
@@ -43,10 +47,10 @@ export class StateService {
     // Load initial data
     this.loadInitialData();
 
-    // Subscribe to WebSocket updates
+    // Subscribe to WebSocket updates with deduplication
     this.websocketService.messages$.subscribe(message => {
       if (message.state) {
-        this.deviceStateSubject.next(message.state);
+        this.updateStateIfNewer(message.state);
       }
       if (message.info) {
         this.deviceInfoSubject.next(message.info);
@@ -60,7 +64,7 @@ export class StateService {
   private loadInitialData(): void {
     // Load state
     this.apiService.getState().subscribe({
-      next: (state) => this.deviceStateSubject.next(state),
+      next: (state) => this.updateStateIfNewer(state),
       error: (error) => console.error('Failed to load state:', error)
     });
 
@@ -84,11 +88,26 @@ export class StateService {
   }
 
   /**
+   * Update state only if it has a newer updateId
+   */
+  private updateStateIfNewer(state: WledState): void {
+    const updateId = state.v || 0;
+    console.log(`[StateService] Received state update: updateId=${updateId}, lastUpdateId=${this.lastUpdateId}`);
+    if (updateId > this.lastUpdateId) {
+      console.log(`[StateService] ✓ Applying update (updateId ${updateId} > ${this.lastUpdateId})`);
+      this.lastUpdateId = updateId;
+      this.deviceStateSubject.next(state);
+    } else {
+      console.log(`[StateService] ✗ Skipping duplicate update (updateId ${updateId} <= ${this.lastUpdateId})`);
+    }
+  }
+
+  /**
    * Update master power
    */
   updateMasterPower(on: boolean): void {
     this.apiService.updateState({ on }).subscribe({
-      next: (state) => this.deviceStateSubject.next(state),
+      next: (state) => this.updateStateIfNewer(state),
       error: (error) => console.error('Failed to update master power:', error)
     });
   }
@@ -98,7 +117,7 @@ export class StateService {
    */
   updateMasterBrightness(bri: number): void {
     this.apiService.updateState({ bri }).subscribe({
-      next: (state) => this.deviceStateSubject.next(state),
+      next: (state) => this.updateStateIfNewer(state),
       error: (error) => console.error('Failed to update master brightness:', error)
     });
   }
@@ -107,12 +126,12 @@ export class StateService {
    * Update segment
    */
   updateSegment(id: number, changes: Partial<Segment>): void {
-    const payload = {
-      seg: [{ id, ...changes } as Segment]
+    const payload: any = {
+      seg: [{ id, ...changes }]
     };
 
     this.apiService.updateState(payload).subscribe({
-      next: (state) => this.deviceStateSubject.next(state),
+      next: (state) => this.updateStateIfNewer(state),
       error: (error) => console.error('Failed to update segment:', error)
     });
   }

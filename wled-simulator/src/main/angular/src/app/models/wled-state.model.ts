@@ -5,6 +5,7 @@ export interface WledState {
   transition?: number;
   ps?: number;
   pl?: number;
+  v?: number;  // Update ID for tracking changes
 }
 
 export interface Segment {

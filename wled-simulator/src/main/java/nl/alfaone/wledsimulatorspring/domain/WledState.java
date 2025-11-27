@@ -18,24 +18,19 @@ import java.util.List;
 @AllArgsConstructor
 public class WledState {
     @JsonProperty("on")
-    @Builder.Default
-    private Boolean on = true;  // Master power
+    private Boolean on;  // Master power
 
     @JsonProperty("bri")
-    @Builder.Default
-    private Integer brightness = 128;  // Master brightness (0-255)
+    private Integer brightness;  // Master brightness (0-255)
 
     @JsonProperty("transition")
-    @Builder.Default
-    private Integer transition = 7;  // Transition time in 100ms units
+    private Integer transition;  // Transition time in 100ms units
 
     @JsonProperty("ps")
-    @Builder.Default
-    private Integer preset = -1;  // Preset ID (-1 = none)
+    private Integer preset;  // Preset ID (-1 = none)
 
     @JsonProperty("pl")
-    @Builder.Default
-    private Integer playlist = -1;  // Playlist ID (-1 = none)
+    private Integer playlist;  // Playlist ID (-1 = none)
 
     @JsonProperty("nl")
     private Nightlight nightlight;
@@ -44,15 +39,17 @@ public class WledState {
     private UdpSync udpSync;
 
     @JsonProperty("lor")
-    @Builder.Default
-    private Integer ledOutputRange = 0;  // LED output range
+    private Integer ledOutputRange;  // LED output range
 
     @JsonProperty("mainseg")
-    @Builder.Default
-    private Integer mainSegment = 0;  // Main segment ID
+    private Integer mainSegment;  // Main segment ID
 
     @JsonProperty("seg")
     private List<Segment> segments;  // LED segments
+
+    @JsonProperty("v")
+    @Builder.Default
+    private Long updateId = 0L;  // Update ID for tracking changes (keep default for initialization)
 
     @Data
     @Builder
@@ -60,24 +57,19 @@ public class WledState {
     @AllArgsConstructor
     public static class Nightlight {
         @JsonProperty("on")
-        @Builder.Default
-        private Boolean on = false;
+        private Boolean on;
 
         @JsonProperty("dur")
-        @Builder.Default
-        private Integer duration = 60;  // Duration in minutes
+        private Integer duration;  // Duration in minutes
 
         @JsonProperty("mode")
-        @Builder.Default
-        private Integer mode = 1;  // Nightlight mode
+        private Integer mode;  // Nightlight mode
 
         @JsonProperty("tbri")
-        @Builder.Default
-        private Integer targetBrightness = 0;  // Target brightness
+        private Integer targetBrightness;  // Target brightness
 
         @JsonProperty("rem")
-        @Builder.Default
-        private Integer remaining = -1;  // Remaining time in minutes
+        private Integer remaining;  // Remaining time in minutes
     }
 
     @Data
@@ -86,11 +78,9 @@ public class WledState {
     @AllArgsConstructor
     public static class UdpSync {
         @JsonProperty("send")
-        @Builder.Default
-        private Boolean send = false;  // Send UDP sync
+        private Boolean send;  // Send UDP sync
 
         @JsonProperty("recv")
-        @Builder.Default
-        private Boolean receive = true;  // Receive UDP sync
+        private Boolean receive;  // Receive UDP sync
     }
 }

@@ -187,13 +187,21 @@ public class WledService {
                     .start(startLed)
                     .stop(stopLed)
                     .length(76)
+                    .grouping(1)
+                    .spacing(0)
+                    .offset(0)
                     .on(true)
+                    .freeze(false)
                     .brightness(255)
+                    .colorTemperature(127)
                     .colors(segmentColors.get(i))
                     .effect(0)  // Solid
                     .speed(128)
                     .intensity(128)
                     .palette(0)  // Default
+                    .selected(true)
+                    .reverse(false)
+                    .mirror(false)
                     .build();
 
             segments.add(segment);
@@ -203,8 +211,21 @@ public class WledService {
                 .on(true)
                 .brightness(128)
                 .transition(7)
-                .nightlight(WledState.Nightlight.builder().build())
-                .udpSync(WledState.UdpSync.builder().build())
+                .preset(-1)
+                .playlist(-1)
+                .nightlight(WledState.Nightlight.builder()
+                        .on(false)
+                        .duration(60)
+                        .mode(1)
+                        .targetBrightness(0)
+                        .remaining(-1)
+                        .build())
+                .udpSync(WledState.UdpSync.builder()
+                        .send(false)
+                        .receive(true)
+                        .build())
+                .ledOutputRange(0)
+                .mainSegment(0)
                 .segments(segments)
                 .build();
     }
@@ -231,6 +252,9 @@ public class WledService {
                 updateSegment(newSeg);
             }
         }
+
+        // Increment updateId to track changes
+        currentState.setUpdateId(currentState.getUpdateId() + 1);
 
         // Broadcast update via WebSocket
         broadcastUpdate();
